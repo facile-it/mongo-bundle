@@ -28,7 +28,7 @@
         "matthiasnoback/symfony-dependency-injection-test": "^4 || ^5 || ^6",
         "symfony/web-profiler-bundle": "^4.4 || ^5.0 || ^6.0 || ^7.0",
         "symfony/console": "^4.4 || ^5.0 || ^6.0 || ^7.0",
-        "phpunit/phpunit": "^9.6.13 || ^10.5.27",
+        "phpunit/phpunit": " ^9.6.13 || ^10.5.27 || ^11.3.1",
         "symfony/browser-kit": "^4.4 || ^5.0 || ^6.0 || ^7.0",
         "symfony/dom-crawler": "^4.4 || ^5.0 || ^6.0 || ^7.0",
         "symfony/phpunit-bridge": "^7.0",
