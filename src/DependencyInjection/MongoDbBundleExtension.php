@@ -58,6 +58,7 @@ final class MongoDbBundleExtension extends Extension
             [
                 new Reference('facile_mongo_db.event_dispatcher'),
                 $debug,
+                $this->defineUriOptionsFactory($config),
                 $this->defineDriverOptionsFactory($config),
             ]
         );
@@ -109,6 +110,11 @@ final class MongoDbBundleExtension extends Extension
                 [new Reference('facile_mongo_db.data_collector.listener'), 'onQueryExecuted'],
             ]
         );
+    }
+
+    private function defineUriOptionsFactory(array $config): ?Reference
+    {
+        return isset($config['uriOptions']) ? new Reference($config['uriOptions']) : null;
     }
 
     private function defineDriverOptionsFactory(array $config): ?Reference

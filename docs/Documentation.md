@@ -90,8 +90,51 @@ mongo_db_bundle:
       client_name: ~
       database_name: ~
 
+  # Service reference to provide URI options - see example below
+  uriOptions: 'App\Services\UriOptionsProvider' # default null
+  
   # Service reference to provide driver options - see example below
   driverOptions: 'App\Services\DriverOptionsProvider' # default null
+```
+
+### Uri options
+
+You might need to specify some URI options for constructing the `MongoDB\Client`. Read the [reference] for a complete
+explanation of all the available options.
+
+Implement `UriOptionsInterface` and declare the class as a Symfony service.
+
+```php
+namespace App\Services;
+
+use Facile\MongoDbBundle\Services\UriOptions\UriOptionsInterface;
+
+final class MyCustomUriOptionsProvider implements UriOptionsInterface
+{
+    private const APPNAME = 'APPNAME';
+
+    public function buildUriOptions(array $clientConfiguration): array
+    {
+        return array_merge(
+            $clientConfiguration,
+            ['appname' => self::APPNAME]
+        );
+    }
+}
+```
+
+```yaml
+# config/services.yaml
+App\Services\MyCustomUriOptionsProvider:
+```
+
+Then use its service id as value of `uriOptions` in the bundle configuration.
+
+```yml
+# config/packages/facile_it_mongodb.yaml
+mongo_db_bundle:
+  uriOptions: 'App\Services\MyCustomUriOptionsProvider'
+  # ...
 ```
 
 ### Driver options

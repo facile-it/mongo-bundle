@@ -26,6 +26,7 @@ final class Configuration implements ConfigurationInterface
         $this->addDataCollection($rootBuilder->children());
         $this->addClients($rootBuilder->children());
         $this->addConnections($rootBuilder->children());
+        $this->addUriOptions($rootBuilder->children());
         $this->addDriversOption($rootBuilder->children());
 
         return $treeBuilder;
@@ -104,6 +105,12 @@ final class Configuration implements ConfigurationInterface
         $hostsBuilder
             ->integerNode('port')
             ->defaultValue(27_017);
+    }
+
+    private function addUriOptions(NodeBuilder $builder): void
+    {
+        $builder
+            ->scalarNode('uriOptions');
     }
 
     private function addDriversOption(NodeBuilder $builder): void

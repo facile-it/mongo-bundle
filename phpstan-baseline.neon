@@ -2,7 +2,7 @@ parameters:
 	ignoreErrors:
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 7
+			count: 8
 			path: src/DependencyInjection/Configuration.php
 
 		-

@@ -8,6 +8,7 @@ use Facile\MongoDbBundle\Capsule\Client as BundleClient;
 use Facile\MongoDbBundle\Event\ConnectionEvent;
 use Facile\MongoDbBundle\Models\ClientConfiguration;
 use Facile\MongoDbBundle\Services\DriverOptions\DriverOptionsInterface;
+use Facile\MongoDbBundle\Services\UriOptions\UriOptionsInterface;
 use MongoDB\Client;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -28,16 +29,20 @@ final class ClientRegistry
 
     private EventDispatcherInterface $eventDispatcher;
 
+    private ?UriOptionsInterface $uriOptionsService;
+
     private ?DriverOptionsInterface $driverOptionsService;
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         bool $debug,
+        ?UriOptionsInterface $uriOptionsService,
         ?DriverOptionsInterface $driverOptionsService
     ) {
         $this->debug = $debug;
         $this->eventDispatcher = $eventDispatcher;
         $this->driverOptionsService = $driverOptionsService;
+        $this->uriOptionsService = $uriOptionsService;
     }
 
     public function addClientsConfigurations(array $configurations): void
@@ -53,6 +58,16 @@ final class ClientRegistry
             $conf['uri'] = $this->buildConnectionUri($conf['hosts']);
         }
 
+        $conf['uriOptions'] = [
+            'replicaSet' => $conf['replicaSet'],
+            'ssl' => $conf['ssl'],
+            'connectTimeoutMS' => $conf['connectTimeoutMS'],
+            'readPreference' => $conf['readPreference'],
+        ];
+        if ($this->uriOptionsService instanceof UriOptionsInterface) {
+            $conf['uriOptions'] = $this->uriOptionsService->buildUriOptions($conf['uriOptions']);
+        }
+
         $conf['driverOptions'] = [];
         if ($this->driverOptionsService instanceof DriverOptionsInterface) {
             $conf['driverOptions'] = $this->driverOptionsService->buildDriverOptions($conf);
@@ -63,12 +78,7 @@ final class ClientRegistry
             $conf['username'],
             $conf['password'],
             $conf['authSource'],
-            [
-                'replicaSet' => $conf['replicaSet'],
-                'ssl' => $conf['ssl'],
-                'connectTimeoutMS' => $conf['connectTimeoutMS'],
-                'readPreference' => $conf['readPreference'],
-            ],
+            $conf['uriOptions'],
             $conf['driverOptions']
         );
     }
@@ -121,5 +131,13 @@ final class ClientRegistry
         }
 
         return new Client($uri, $options, $driverOptions);
+    }
+
+    /**
+     * @return ClientConfiguration[]
+     */
+    public function getConfigurations(): array
+    {
+        return $this->configurations;
     }
 }
