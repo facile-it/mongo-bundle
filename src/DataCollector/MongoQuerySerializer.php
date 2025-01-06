@@ -24,7 +24,7 @@ final class MongoQuerySerializer
      *
      * @return mixed[]
      */
-    private static function prepareUnserializableData($data, int $maxDepth = 256): array
+    private static function prepareUnserializableData($data, int $maxDepth = 50): array
     {
         if ($data instanceof Serializable) {
             $data = $data->bsonSerialize();
@@ -43,7 +43,7 @@ final class MongoQuerySerializer
      *
      * @return mixed
      */
-    public static function prepareItemData($item, int $maxDepth = 256)
+    public static function prepareItemData($item, int $maxDepth = 50)
     {
         // Prevent infinite recursion
         if ($maxDepth < 0) {
